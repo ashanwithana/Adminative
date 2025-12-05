@@ -1,59 +1,206 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laravel 12 Admin Panel with Custom OTP Authentication
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A comprehensive admin panel built with Laravel 12, featuring custom OTP-based authentication, role-based access control (RBAC), and modern UI with TailwindCSS.
 
-## About Laravel
+## ✨ Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Custom OTP Authentication** - Login/Register with Email or SMS OTP
+- **Role-Based Access Control** - Dynamic permissions using Spatie Permission
+- **Clean Architecture** - Repositories, Services, Actions, DTOs pattern
+- **Activity Logging** - Track all admin actions with Spatie Activity Log
+- **Laravel Telescope** - Monitor requests, queries, exceptions
+- **Modern UI** - TailwindCSS with responsive design
+- **Security** - CSRF protection, rate limiting, encryption
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 Quick Start
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Installation
 
-## Learning Laravel
+```bash
+# Install dependencies
+composer install
+npm install
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+# Setup environment
+cp .env.example .env
+php artisan key:generate
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+# Configure database (SQLite is default)
+touch database/database.sqlite
 
-## Laravel Sponsors
+# Run migrations and seed
+php artisan migrate:fresh --seed
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Build assets
+npm run build
 
-### Premium Partners
+# Start server
+php artisan serve
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Visit: http://localhost:8000
 
-## Contributing
+### Default Users
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Role | Email | Phone | Password |
+|------|-------|-------|----------|
+| **Admin** | admin@example.com | +1234567890 | password |
+| **Manager** | manager@example.com | +1234567891 | password |
+| **User** | user@example.com | +1234567892 | password |
 
-## Code of Conduct
+**Note**: OTP codes are logged to `storage/logs/laravel.log` during development.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 📋 Requirements
 
-## Security Vulnerabilities
+- PHP 8.2+
+- Composer
+- Node.js & NPM
+- SQLite/MySQL/PostgreSQL
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🏗️ Architecture
 
-## License
+```
+Clean Architecture Pattern:
+- Controllers → Handle HTTP requests
+- Services → Business logic
+- Repositories → Data access
+- Actions → Single-responsibility operations
+- DTOs → Data transfer between layers
+- Interfaces → Dependency contracts
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 🔐 OTP Authentication Flow
+
+1. **Request OTP**: Enter email or phone → OTP sent
+2. **Verify OTP**: Enter 6-digit code → Authenticated
+3. **Security**: Hashed storage, 10-min expiry, 3 attempt limit
+
+## 📁 Project Structure
+
+```
+app/
+├── Actions/Auth/          # Login, Register, SendOtp actions
+├── Contracts/             # Interfaces for Repositories & Services
+├── DTOs/                  # Data Transfer Objects
+├── Http/Controllers/
+│   ├── Admin/             # Dashboard, Users, Roles, Logs
+│   └── Auth/              # OTP Authentication
+├── Repositories/          # Data access layer
+├── Services/              # Business services (OTP, User, SMS)
+└── Models/                # User, Otp
+
+resources/views/
+├── layouts/               # App, Guest layouts with Sidebar/Navbar
+├── auth/                  # Login, Verify, Register
+└── admin/                 # Dashboard, Users, Roles, Logs
+```
+
+## 🛡️ Permissions
+
+**User Management**: view, create, edit, delete users
+**Role Management**: view, create, edit, delete roles
+**System**: view activity logs, access telescope
+
+## 🧪 Testing
+
+```bash
+php artisan test
+```
+
+## 📝 Configuration
+
+### Email (for OTP)
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=your_username
+MAIL_PASSWORD=your_password
+```
+
+### SMS via Twilio (Optional)
+```env
+TWILIO_SID=your_sid
+TWILIO_TOKEN=your_token
+TWILIO_FROM=+1234567890
+```
+
+If Twilio not configured, SMS uses mock service (logs to Laravel log).
+
+## 🔧 Commands
+
+```bash
+# Clear caches
+php artisan optimize:clear
+
+# Run queue worker
+php artisan queue:work
+
+# Code formatting
+./vendor/bin/pint
+
+# Cleanup expired OTPs (add to scheduler)
+php artisan app:cleanup-otps
+```
+
+## 📱 Routes
+
+### Authentication
+- `GET /auth/login` - Login form
+- `POST /auth/otp/send` - Send OTP
+- `POST /auth/otp/verify` - Verify & login
+- `GET /auth/register` - Registration
+- `POST /auth/logout` - Logout
+
+### Admin Panel
+- `GET /admin/dashboard` - Dashboard
+- `resource /admin/users` - User CRUD
+- `resource /admin/roles` - Role CRUD
+- `GET /admin/activity-logs` - Activity logs
+- `GET /telescope` - System monitoring
+
+## 🔒 Security Features
+
+- ✅ CSRF protection on all forms
+- ✅ Rate limiting (5 attempts/min on OTP)
+- ✅ OTP hashing (SHA-256)
+- ✅ Password hashing (Bcrypt)
+- ✅ Session-based auth
+- ✅ Middleware protection (auth, role, permission)
+- ✅ Input validation (Form Requests)
+
+## 🛠️ Troubleshooting
+
+**OTP not received?**
+- Check `storage/logs/laravel.log` for OTP codes
+- Verify mail/SMS configuration in `.env`
+
+**Permission errors?**
+```bash
+php artisan cache:clear
+php artisan config:clear
+```
+
+**Reset database?**
+```bash
+php artisan migrate:fresh --seed
+```
+
+## 📦 Technologies
+
+- Laravel 12
+- Vite
+- TailwindCSS
+- Spatie Laravel Permission
+- Spatie Laravel Activity Log
+- Laravel Telescope
+- Twilio SDK
+
+## 📄 License
+
+MIT License
+
+---
+
+**Author**: Built with ❤️ using Laravel 12
+**Date**: November 2025
